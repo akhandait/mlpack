@@ -45,7 +45,14 @@ class Linear
    * @param inSize The number of input units.
    * @param outSize The number of output units.
    */
-  Linear(const size_t inSize, const size_t outSize);;
+  Linear(const size_t inSize, const size_t outSize);
+
+  /**
+   * Create the Linear layer object using the specified layer size.
+   *
+   * @param layerSize The number of output units.
+   */
+  Linear(const size_t layerSize);
 
   /*
    * Reset the layer parameter.
@@ -113,6 +120,16 @@ class Linear
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
+  //! Get the input size.
+  size_t const& InputSize() const { return inSize; }
+  //! Modify the input size.
+  size_t& InputSize() { return inSize; }
+
+  //! Get the output size.
+  size_t const& OutputSize() const { return outSize; }
+  //! Modify the output size.
+  size_t& OutputSize() { return outSize; }
+
   /**
    * Serialize the layer
    */
@@ -129,7 +146,7 @@ class Linear
   //! Locally-stored weight object.
   OutputDataType weights;
 
-  //! Locally-stored weight paramters.
+  //! Locally-stored weight parameters.
   OutputDataType weight;
 
   //! Locally-stored bias term parameters.

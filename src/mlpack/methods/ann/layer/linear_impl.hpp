@@ -35,9 +35,19 @@ Linear<InputDataType, OutputDataType>::Linear(
   weights.set_size(outSize * inSize + outSize, 1);
 }
 
+template <typename InputDataType, typename OutputDataType>
+Linear<InputDataType, OutputDataType>::Linear(
+    const size_t layerSize) :
+    outSize(layerSize)
+{
+  // Nothing to do here.
+}
+
 template<typename InputDataType, typename OutputDataType>
 void Linear<InputDataType, OutputDataType>::Reset()
 {
+  weights.set_size(outSize * inSize + outSize, 1);
+
   weight = arma::mat(weights.memptr(), outSize, inSize, false, false);
   bias = arma::mat(weights.memptr() + weight.n_elem,
       outSize, 1, false, false);
