@@ -150,7 +150,7 @@ BOOST_AUTO_TEST_CASE(JacobianNormalDistributionSoftplusTest)
 
     module.LogProbBackward(std::move(target), std::move(jacobianB));
     BOOST_REQUIRE_LE(arma::max(arma::max(arma::abs(jacobianA - jacobianB))),
-        1e-5);
+        3e-5);
   }
 }
 

@@ -118,6 +118,7 @@ class NormalDistribution
     ar & BOOST_SERIALIZATION_NVP(mean);
     ar & BOOST_SERIALIZATION_NVP(stdDev);
     ar & BOOST_SERIALIZATION_NVP(preStdDev);
+    ar & BOOST_SERIALIZATION_NVP(applySoftplus);
   }
 
  private:

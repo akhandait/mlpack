@@ -30,7 +30,8 @@ NormalDistribution<DataType>::NormalDistribution(
     const DataType&& mean,
     const DataType&& stdDev) :
     mean(mean),
-    stdDev(stdDev)
+    stdDev(stdDev),
+    applySoftplus(true)
 {
   if (mean.size() != stdDev.size())
   {
@@ -78,7 +79,7 @@ double NormalDistribution<DataType>::LogProbability(
   }
 
   return -0.5 * (arma::accu(2 * arma::log(stdDev) + arma::pow(
-      (mean - observation) / stdDev, 2) + log2pi));
+      (mean - observation) / stdDev, 2) + log2pi)) / observation.n_cols;
 }
 
 template<typename DataType>
