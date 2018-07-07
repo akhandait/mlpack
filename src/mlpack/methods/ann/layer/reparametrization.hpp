@@ -93,6 +93,9 @@ class Reparametrization
   //! Get the KL divergence with standard normal.
   double Loss()
   {
+    if (!includeKl)
+      return 0;
+
     return -0.5 * arma::accu(2 * arma::log(stdDev) - arma::pow(stdDev, 2)
         - arma::pow(mean, 2) + 1);
   }
