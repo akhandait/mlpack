@@ -182,6 +182,7 @@ void FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Predict(
     results.col(i) = resultsTemp.col(0);
   }
 }
+
 template<typename OutputLayerType, typename InitializationRuleType,
          typename... CustomLayers>
 double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
@@ -198,9 +199,8 @@ double FFN<OutputLayerType, InitializationRuleType, CustomLayers...>::Evaluate(
 
   Forward(std::move(predictors));
 
-  double res = outputLayer.Forward(
-      std::move(boost::apply_visitor(outputParameterVisitor, network.back())),
-      std::move(responses));
+  double res = outputLayer.Forward(std::move(boost::apply_visitor(
+      outputParameterVisitor, network.back())), std::move(responses));
 
   for (size_t i = 0; i < network.size(); ++i)
   {
