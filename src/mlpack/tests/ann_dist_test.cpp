@@ -28,10 +28,10 @@ BOOST_AUTO_TEST_SUITE(ANNDistTest);
 BOOST_AUTO_TEST_CASE(SimpleNormalDistributionTest)
 {
   static const constexpr double log2pi = 1.83787706640934533908193770912475883;
-  arma::mat param, target, gradient;
+  arma::mat gradient;
+  arma::mat param = arma::ones(10, 1);
+  arma::mat target = arma::ones(5, 1);
   double output;
-  param.ones(10, 1);
-  target.ones(5, 1);
 
   NormalDistribution<> module(std::move(param), false);
 

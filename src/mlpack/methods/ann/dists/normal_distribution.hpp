@@ -64,7 +64,7 @@ class NormalDistribution
    */
   double Probability(const DataType&& observation) const
   {
-    return exp(LogProbability(observation));
+    return std::exp(LogProbability(observation));
   }
 
   /**

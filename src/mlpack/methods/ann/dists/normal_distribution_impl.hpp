@@ -58,7 +58,7 @@ NormalDistribution<DataType>::NormalDistribution(
   if (applySoftplus)
     SoftplusFunction::Fn(preStdDev, stdDev);
   else
-    stdDev = preStdDev;
+    stdDev = arma::mat(preStdDev.memptr(), preStdDev.n_rows, preStdDev.n_cols, false, false);
 }
 
 template<typename DataType>
