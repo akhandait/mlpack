@@ -97,7 +97,7 @@ class Reparametrization
       return 0;
 
     return -0.5 * arma::accu(2 * arma::log(stdDev) - arma::pow(stdDev, 2)
-        - arma::pow(mean, 2) + 1);
+        - arma::pow(mean, 2) + 1) / mean.n_cols;
   }
 
   /**
