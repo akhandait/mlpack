@@ -19,14 +19,15 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The mean squared error performance function measures the network's
- * performance according to the mean of squared errors.
+ * The reconstruction loss performance function measures the network's
+ * performance equal to the negative log probability of the target with
+ * the input distribution.
  *
- * @tparam ActivationFunction Activation function used for the embedding layer.
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
+ * @tparam DistType The type of distribution parametrized by the input.
  */
 template <
     typename InputDataType = arma::mat,
@@ -42,18 +43,19 @@ class ReconstructionLoss
   ReconstructionLoss();
 
   /*
-   * Computes the mean squared error function.
+   * Computes the reconstruction loss.
    *
    * @param input Input data used for evaluating the specified function.
-   * @param output Resulting output activation.
+   * @param target The target matrix.
    */
   template<typename InputType, typename TargetType>
   double Forward(const InputType&& input, const TargetType&& target);
+
   /**
    * Ordinary feed backward pass of a neural network.
    *
    * @param input The propagated input activation.
-   * @param target The target vector.
+   * @param target The target matrix.
    * @param output The calculated error.
    */
   template<typename InputType, typename TargetType, typename OutputType>

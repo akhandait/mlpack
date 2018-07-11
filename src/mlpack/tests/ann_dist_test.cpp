@@ -16,6 +16,7 @@
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
+#include "../methods/ann/activation_functions/softplus_function.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -126,13 +127,13 @@ BOOST_AUTO_TEST_CASE(JacobianNormalDistributionSoftplusTest)
     {
       original = module.PreStdDev()(j);
       module.PreStdDev()(j) = original - perturbation;
-      module.ApplySoftplus();
+      SoftplusFunction::Fn(module.PreStdDev(), module.StdDev());
       outputA = module.LogProbability(std::move(target));
       module.PreStdDev()(j) = original + perturbation;
-      module.ApplySoftplus();
+      SoftplusFunction::Fn(module.PreStdDev(), module.StdDev());
       outputB = module.LogProbability(std::move(target));
       module.PreStdDev()(j) = original;
-      module.ApplySoftplus();
+      SoftplusFunction::Fn(module.PreStdDev(), module.StdDev());
       outputB -= outputA;
       outputB /= 2 * perturbation;
       jacobianA(j) = outputB;

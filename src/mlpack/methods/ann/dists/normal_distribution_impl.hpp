@@ -1,5 +1,5 @@
 /**
- * @file normal_distribution.cpp
+ * @file normal_distribution_impl.hpp
  * @author Atharva Khandait
  *
  * Implementation of the Normal distribution class.
@@ -58,7 +58,8 @@ NormalDistribution<DataType>::NormalDistribution(
   if (applySoftplus)
     SoftplusFunction::Fn(preStdDev, stdDev);
   else
-    stdDev = arma::mat(preStdDev.memptr(), preStdDev.n_rows, preStdDev.n_cols, false, false);
+    stdDev = arma::mat(preStdDev.memptr(), preStdDev.n_rows, preStdDev.n_cols,
+        false, false);
 }
 
 template<typename DataType>
@@ -73,8 +74,8 @@ double NormalDistribution<DataType>::LogProbability(
 {
   if (observation.size() != mean.size())
   {
-    Log::Fatal << "NormalDistribution<>::NormalDistribution(): The size of the"
-        << "observation should be equal to the sizes of the mean and standard"
+    Log::Fatal << "NormalDistribution<>::NormalDistribution(): The size of the "
+        << "observation should be equal to the sizes of the mean and standard "
         << "deviation." << std::endl;
   }
 
