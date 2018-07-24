@@ -12,11 +12,13 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/ann/dists/normal_distribution.hpp>
+#include <mlpack/methods/ann/dists/bernoulli_distribution.hpp>
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "test_tools.hpp"
-#include "../methods/ann/activation_functions/softplus_function.hpp"
+#include <mlpack/methods/ann/activation_functions/softplus_function.hpp>
+#include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -147,6 +149,109 @@ BOOST_AUTO_TEST_CASE(JacobianNormalDistributionSoftplusTest)
       outputB -= outputA;
       outputB /= 2 * perturbation;
       jacobianA(j + targetElements) = outputB;
+    }
+
+    module.LogProbBackward(std::move(target), std::move(jacobianB));
+    BOOST_REQUIRE_LE(arma::max(arma::max(arma::abs(jacobianA - jacobianB))),
+        3e-5);
+  }
+}
+
+/**
+ * Simple bernoulli distribution module test.
+ */
+BOOST_AUTO_TEST_CASE(SimpleBernoulliDistributionTest)
+{
+  arma::mat param = arma::mat("1 1 0");
+  BernoulliDistribution<> module(std::move(param), false);
+
+  arma::mat sample = module.Sample();
+  // As the probabilities are [1, 1, 0], the bernoulli samples should be
+  // [1, 1, 0] as well.
+  CheckMatrices(param, sample);
+}
+
+/**
+ * Jacobian bernoulli distribution module test when we don't apply logistic.
+ */
+BOOST_AUTO_TEST_CASE(JacobianBernoulliDistributionTest)
+{
+  for (size_t i = 0; i < 5; i++)
+  {
+    const size_t targetElements = math::RandInt(2, 1000);
+
+    arma::mat param;
+    param.randn(targetElements, 1);
+
+    arma::mat target;
+    target.randn(targetElements, 1);
+
+    BernoulliDistribution<> module(std::move(param), false);
+
+    const double perturbation = 1e-6;
+    double outputA, outputB, original;
+    arma::mat jacobianA, jacobianB;
+
+    // Initialize the jacobian matrix.
+    jacobianA = arma::zeros(targetElements, 1);
+
+    for (size_t j = 0; j < targetElements; ++j)
+    {
+      original = module.Probability()(j);
+      module.Probability()(j) = original - perturbation;
+      outputA = module.LogProbability(std::move(target));
+      module.Probability()(j) = original + perturbation;
+      outputB = module.LogProbability(std::move(target));
+      module.Probability()(j) = original;
+      outputB -= outputA;
+      outputB /= 2 * perturbation;
+      jacobianA(j) = outputB;
+    }
+
+    module.LogProbBackward(std::move(target), std::move(jacobianB));
+    BOOST_REQUIRE_LE(arma::max(arma::max(arma::abs(jacobianA - jacobianB))),
+        1e-5);
+  }
+}
+
+/**
+ * Jacobian bernoulli distribution module test when we apply logistic.
+ */
+BOOST_AUTO_TEST_CASE(JacobianBernoulliDistributionLogisticTest)
+{
+  for (size_t i = 0; i < 5; i++)
+  {
+    const size_t targetElements = math::RandInt(2, 1000);
+
+    arma::mat param;
+    param.randn(targetElements, 1);
+
+    arma::mat target;
+    target.randn(targetElements, 1);
+
+    BernoulliDistribution<> module(std::move(param));
+
+    const double perturbation = 1e-6;
+    double outputA, outputB, original;
+    arma::mat jacobianA, jacobianB;
+
+    // Initialize the jacobian matrix.
+    jacobianA = arma::zeros(targetElements, 1);
+
+    for (size_t j = 0; j < targetElements; ++j)
+    {
+      original = module.PreProbability()(j);
+      module.PreProbability()(j) = original - perturbation;
+      LogisticFunction::Fn(module.PreProbability(), module.Probability());
+      outputA = module.LogProbability(std::move(target));
+      module.PreProbability()(j) = original + perturbation;
+      LogisticFunction::Fn(module.PreProbability(), module.Probability());
+      outputB = module.LogProbability(std::move(target));
+      module.PreProbability()(j) = original;
+      LogisticFunction::Fn(module.PreProbability(), module.Probability());
+      outputB -= outputA;
+      outputB /= 2 * perturbation;
+      jacobianA(j) = outputB;
     }
 
     module.LogProbBackward(std::move(target), std::move(jacobianB));
